@@ -80,7 +80,7 @@ exports.upvote = functions.https.onCall(async (data, context) => {
   const doc = await user.get();
 
   // check thew user hasn't already upvoted
-  console.log(doc.data());
+  //console.log(doc.data());
   if (doc.data().upVotedOn.includes(data.id)) {
     throw new functions.https.HttpsError(
       "failed-precondition",
@@ -98,3 +98,24 @@ exports.upvote = functions.https.onCall(async (data, context) => {
     upVotes: admin.firestore.FieldValue.increment(1),
   });
 });
+
+//Firestore trigger for tracking activity
+exports.logActivities = functions.firestore
+  .document("/{collection}/{id}")
+  .onCreate((snap, context) => {
+    console.log(snap.data());
+
+    const collection = context.params.collection;
+    const id = context.params.id;
+
+    const activities = admin.firestore().collection("activities");
+
+    if (collection === "requests") {
+      return activities.add({ text: "a new tutorial requests was added" });
+    }
+    if (id === "users") {
+      return activities.add({ text: "a new user was added" });
+    }
+
+    return null;
+  });
