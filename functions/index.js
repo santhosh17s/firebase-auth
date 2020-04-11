@@ -113,7 +113,7 @@ exports.logActivities = functions.firestore
     if (collection === "requests") {
       return activities.add({ text: "a new tutorial requests was added" });
     }
-    if (id === "users") {
+    if (collection === "users") {
       return activities.add({ text: "a new user was added" });
     }
 
